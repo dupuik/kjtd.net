@@ -1,0 +1,262 @@
+<TITLE>Estimating Disk Failure Rates.</TITLE>
+<H1>Estimating Disk Failure Rates.</H1>
+<P ALIGN=right><B>Febuary 14, 1996</B><BR>
+<P>
+The Rensselaer Computing System is built on top of the Andrew File
+System (AFS).  AFS at RPI runs on 15 fileserver which together provide access
+to over 100 Gigabytes of date.  AFS is robust in that failure of a single
+drive, or fileserver does not bring down the entire system.  Files can
+be restored to an active system, and key files can be replicated over
+several fileservers.<P>
+With over 70 individual disk drives in AFS, however, frequent disk
+failures are to be expected.  Even if an individual disk had only 
+a .01 probability of failing in a given year, with 70 disks the
+probability of <I>at least</I> one drive failing is 1-.96^{70,
+or .51  That is, even with high reliability, we should expect to
+see frequent disk failures.<P>
+This document is an attempt to evaluate disk reliability based on
+manufacturer estimates of Mean Time Between Failures.  It is instructive
+to see if our observed failure rates are what one would expect given
+manufacturer reliability estimates.  After defining Mean Time Between
+Failure, and calculating the observed failure rate in RCS, some
+recomendations for disk replacement are made.<P>
+
+<H2>Mean Time Between Failure.</H2><P>
+Disk reliability is usually reported by manufacturers as the MTBF, or
+Mean Time Between Failures.  Understanding what this metric means,
+and how it is measured is important for estimating disk failure rates.
+IBM defines MTBF as:<P>
+<UL>
+
+<LI>MTBF is the mean of a distribution of product life times, often
+estimated by dividing the total operating time accumulated by a ``defined
+group'' of drives within a given time period, by the total number of
+failures in that time period.<SUP><A HREF="#footnote1">1</A></SUP>
+</UL>
+<P>
+That is, run a bunch of drives for a given amount of time, and divide
+by the number of failures:
+<P>
+{ MTBF = {{ hours\ of\ operation\over{ number\ of\ errors<P>
+<P>
+There are three important considerations left out of this equation:
+what is a ``defined group'' of drives; what is a failure; and, what
+is the distribution.<P>
+IBM defines the ``defined group'' as drives that:
+<OL>
+
+        <LI>have not reached end-of-life (typically five to seven years),
+        <LI>are operated within a specified reliability temperature range,
+        under specified normal usage conditions, and
+        <LI>have not been damaged or abused.
+</OL>
+<P>
+Most important to note is that if a drive was manufactured for a
+lifetime of five years, it is no longer included in the MTBF calculation
+once it is five years old.<SUP><A HREF="#footnote2">2</A></SUP><P>
+A failure is ``[a]ny event that prevents a drive from performing its
+specified operation, given the drive meets the group definition
+[described above].''  This does include drives that fail during shipment
+or in early life.  It doesn't include drives that are miss-installed, or
+miss-handled.<P>
+Finally, MTBF does not provide any estimate of variance.  That is, does
+a MTBF of 100,000 hours mean a single drive run for over 11 years, or 10
+drives run for a little over a year.  Knowing the number of drives would
+allow one to estimate the variability of the MTBF.  However, since MTBF
+is usually reported in increments of 100,000 hours, there is a bit of
+rounding in the reported figure.<SUP><A HREF="#footnote3">3</A></SUP><P>
+You may ask how the MTBF of a drive with a five year lifetime can exceed
+43,800 hours.  The answer is that, if the drives were replaced every
+five years with new drives with identical MTBF, you would have a good
+probability of going to the MTBF before seeing a failure.  How good a
+probability depends on the distribution, which we do not know, but IBM
+suggest it is greater then .30 for their 1,000,000 hour MTBF product
+line.<P>
+<H2>Estimating the Number of Failures From MTBF.</H2><P>
+One important thing to remember is that we have more then one drive
+running at any given time (see the tables at the end of this
+document).  This means that the
+hours of runtime contributing to MTBF are adding up in parallel.
+IBM suggest the following equation to estimate the number of failures
+to expect over the lifetime of a ``drive group.''
+<P>
+
+        r \approx {n\ { drives \times \displaystyle
+                       h \left({ hours\over{ drive\right)
+                \over
+             { MTBF\displaystyle\left({ hours\over { failure\right)
+<P>
+
+For example, if you run 1,000 drives for five years, and each drive has
+a MTBF of 1,000,000 hours we have:
+<P>
+
+        44 \approx {1{,000\ { drives \times \displaystyle
+                       43{,800  \left({ hours\over{ drive\right)
+                \over
+          1{,000{,000\displaystyle\left({ hours\over { failure\right)
+<P>
+
+Lacking any information on the MTBF variance, this seems to be
+a reasonable formula.<P>
+
+<H2>Disk Loss in the rpi.edu Cell.</H2><P>
+We currently have 71 disks in AFS space.  Assuming each disk has a MTBF
+of 500,000 hours over a five year period we would expect:
+<P>
+
+        { errors = 6 \approx {71\ { drives \times \displaystyle
+                43{,800 \left({ hours\over{ drive\right)
+                \over
+             500{,000\displaystyle \left({ hours\over { failure\right)
+<P>
+
+In reality, we have seen six failures since the end of July.
+Our <I>observed</I> MTBF, therefore, is less then 500,000 hours.<P>
+A rough estimate of observed MTBF can be calculated by solving the above
+formula for MTBF.  In the past year we have seen about eight disk
+failures.<SUP><A HREF="#footnote4">4</A></SUP>
+This gives a MTBF of 388,725 hours assuming a five year lifetime for
+each drive, and assuming all 71 drives have been running for five years.
+The second assumption is obviously false, so the result indicates an
+upper bound on observed MTBF (less drives indicates a higher failure
+rate).  The low MTBF value is most likely due to a number of ``real life''
+variables such as the recent power problems, and the use of the drives
+in fileservers, which increases the seek rate reducing manufacturer MTBF.<P>
+We can also use the observed probability of failure to calculate
+a 95% confidence interval for the number of disks expected to fail
+next year.  A confidence interval for an observed probability is
+given by:
+<P>
+
+np \pm nz_{\alpha/2 \sqrt{p(1-p)\over n
+<P>
+<P>
+Where p = r/n, n is the number of drives, and z_{\alpha/2 is
+the z-score value at the desired confidence level.
+Using our observed failure rate of 8 out of 71 drives, we get a 95%
+confidence interval of 8\pm 5.37 \approx 3-13 disks.<P>
+<H2>Recommendations.</H2><P>
+First, we should have a replacement disk in stock for all of the
+<TT>rootvg</TT>
+ (root volume group) disks on the fileservers.  The <TT>rootvg</TT>
+
+contains the operating system and applications (AFS) code.  Loosing the
+<TT>rootvg</TT>
+ on a fileserver will bring down the server, and prevent access
+to all of the AFS files on that server until it is replaced.<P>
+The replacement needs to be compatible, but not identical.  For example,
+if one of the two 670 Meg disks used for aaron's <TT>rootvg</TT>
+ were to fail,
+it can be replaced with a 1 gig disk.  A complete listing of the
+fileservers and their <TT>rootvg</TT>
+ disks is at the end of this document.<P>
+Second, there should be about 10% of total AFS space available as
+unclaimed disks at any one time.  This will allow for day-to-day growth,
+and to provide a pool of partitions to which files can be restored in
+case of a disk failure.  It is best if this reserve were divided into
+partitions of varying sizes.  A single 2 gig disk may be divided into 4
+partitions.  If this disk fails, we would ideally require 4 partitions
+of equal or larger size for the restore.  A large reserve drive, such as
+a 4.3 gig SSA disk, could be repartitions into the required sizes, but
+this would require at least one restart of AFS on the fileserver.<P>
+At this time, we have less then 5% of AFS space in reserve, and half of
+this is in small, miscellaneous partitions that would not allow a full
+restore of any lost partitions.  There are, however, about 10 gig worth
+of disks comming into service soon.<P>
+Third, any estimate of future disk use should also take into account end
+of lifetime replacements.  A simple formula for this is the number of
+disks divided by the disk lifetimes.  Assuming an average lifetime of
+five years, we should expect to replace \lfloor 71/5\rfloor = 14 disks
+per year.  This is a pro-active replacement strategy that removes old
+disks before they fail.  The disks can be cycled into less critical
+applications such as individual workstations or hot spares, or they can
+be sold as used disks.  This is in addition to the half-dozen (or more)
+disks we can expect to die in a given year based on observed MTBF.<P>
+
+<H2>Disks Installed in AFS fileservers.</H2><P>
+The following tables are a summary of the disk types installed in the
+AFS fileservers.  The actual drives are, of course, subject to change
+as time progresses.  An updated listing in Xess format can be found in
+<TT> sofkam/public/disks.x3</TT>
+.  The current pool of AFS partitions can
+be found with the <TT>vspace</TT>
+ program, which can be accessed by setting
+up <TT>afstools</TT>
+.<P>
+<P>
+ <B>Root volume group disks by fileserver.</B><P>
+<P>
+\vbox{\halign{#\hfil\tabskip1em &#\hfil &\hfil#\tabskip2pt&#\hfil\tabskip1em
+        &#\hfil &#\hfil &#\hfil &\hfil #\tabskip0pt\cr
+\bf Server &\bf\hfil CPU &\bf\span Size &\bf\hfil Disk &\bf\hfil Type/Model
+        &\bf\hfil Serial no.&\bf\hfil Part no.\cr
+\noalign{\vskip2pt
+aaron         &950     &670&MB &hdisk11&8760S     &12311702\cr
+aaron         &950     &670&MB &hdisk12&8760S     &12314057\cr
+abraham       &520     &670&MB &hdisk4 &8760S     &12914718\cr
+adam          &220     &400&MB &hdisk0 &0661467   &05193408      &73F8955\cr
+asher         &370     &540&MB &hdisk0 &MXT-540SL &003B1NGE      &74G8675\cr
+azariah       &250     &1.0&GB &hdisk0 &0663L12   &00130560      &45G9512\cr
+david         &230     &1.0&GB &hdisk0 &0663L12   &00002083      &55F9838\cr
+hannah        &530     &670&MB &hdisk0 &8760S     &12912472\cr
+jonah         &530     &670&MB &hdisk0 &8760S     &12832601\cr
+levi          &230     &1.0&GB &hdisk0 &0663L12   &00016356      &45G9464\cr
+mishael       &550     &400&MB &hdisk0 &0661467   &05051197      &73F8955\cr
+mishael       &550     &400&MB &hdisk1 &0661467   &05061971      &73F8955\cr
+moses         &520     &670&MB &hdisk0 &8760-S    &12885641\cr
+nebuchadnezzar&530     &670&MB &hdisk0 &8760S     &12957668\cr
+noah          &320H    &400&MB &hdisk0 &0661-467  &05198791\cr
+samson        &530     &670&MB &hdisk2 &8760S     &12980090\cr
+seth          &320H    &400&MB &hdisk0 &0661-467  &05053116\cr
+<P>
+<P>
+ <B>AFS disks by type.</B><P>
+<P>
+\vbox{\halign{\hfil#\tabskip1em& \hfil#\tabskip2pt&#\hfil\tabskip1em
+        &#\hfil\tabskip0pt\cr
+\bf No.&\bf\span Size&\bf Description\cr
+\noalign{\vskip2pt
+   2& 1.0&GB &SCSI Disk Drive\cr
+   4& 1.3&GB &Hitachi SCSI Disk Drive\cr
+   4& 1.3&GB &IBM SCSI Disk Drive\cr
+   1& 1.6&GB &Microp SCSI Disk Drive\cr
+   4& 2.0&GB &HP SCSI Disk Drive\cr
+   1& 2.0&GB &IBM OEM SCSI Disk Drive\cr
+  11& 2.0&GB &SCSI Disk Drive\cr
+   7& 2.8&GB &Hitachi SCSI Disk Drive\cr
+   6& 2.8&GB &Seagate SCSI Disk Drive\cr
+   4& 355&MB &SCSI Disk Drive\cr
+   6& 4.3&GB &SSA Logical Disk Drive\cr
+   3& 400&MB &SCSI Disk Drive\cr
+   3& 628&MB &HP SCSI Disk Drive\cr
+   4& 640&MB &Microp SCSI Disk Drive\cr
+  11& 670&MB &SCSI Disk Drive\cr
+\noalign{
+\hrule
+\vskip4pt
+  71&123&GB& Total\cr
+<P>
+<P>
+<P>
+
+<HR>
+<P><A NAME="footnote1">1</A>
+This and subsequent quotes are
+from: <I>MTBF---A measure of OEM disk drive reliability</I>,
+<A HREF="http://eagle.almaden.ibm.com/storage/oem/tech/mtbf.htm">http://eagle.almaden.ibm.com/storage/oem/tech/mtbf.htm</A>, August 21, 1995.
+<P>
+<P><A NAME="footnote2">2</A>
+In other words, a catastrophic
+failure of the bearings at five years, 1 month is not a failure
+according to MTBF.
+<P>
+<P><A NAME="footnote3">3</A>
+The reality is usually that no
+drives are tested before shipping, in which case the MTBF is an estimate
+based on the performance of similar drives in the field.
+<P>
+<P><A NAME="footnote4">4</A>
+The actual number may be higher.  Eight is based on
+memory, but a more accurate count based on invoices is in the works.
+<P>
