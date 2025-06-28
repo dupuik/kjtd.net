@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charSet="utf-8">
+<title>KJTDNET GTAW BBS</title>
+</head>
+<body {background-color: black;}>
+<div id="fTelnetContainer" class="fTelnetContainer"></div>
+<script>document.write('<script src="//embed-v2.ftelnet.ca/js/ftelnet-loader.norip.xfer.js?v=' + (new Date()).getTime() + '"><\/script>');</script>
+<script>
+    var Options = new fTelnetOptions();
+    Options.BareLFtoCRLF = false;
+    Options.BitsPerSecond = 38400;
+    Options.ConnectionType = 'telnet';
+    Options.Emulation = 'ansi-bbs';
+    Options.Enter = '\r';
+    Options.Font = 'CP437';
+    Options.ForceWss = false;
+    Options.Hostname = 'gtaw.bbs.kjtd.net';
+    Options.LocalEcho = false;
+    Options.NegotiateLocalEcho = true;
+    Options.Port = 23;
+    Options.ProxyHostname = 'p-us-east.ftelnet.ca';
+    Options.ProxyPort = 80;
+    Options.ProxyPortSecure = 443;
+    Options.ScreenColumns = 80;
+    Options.ScreenRows = 25;
+    Options.SendLocation = true;
+    var fTelnet = new fTelnetClient('fTelnetContainer', Options);
+</script>
+</body>
+</html>
