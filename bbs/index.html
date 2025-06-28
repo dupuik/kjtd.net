@@ -13,7 +13,7 @@
 <script>
     var Options = new fTelnetOptions();
     Options.BareLFtoCRLF = false;
-    Options.BitsPerSecond = 57600;
+    Options.BitsPerSecond = 9600;
     Options.ConnectionType = 'telnet';
     Options.Emulation = 'ansi-bbs';
     Options.Enter = '\r';
@@ -28,7 +28,7 @@
     Options.ProxyPortSecure = 443;
     Options.ScreenColumns = 80;
     Options.ScreenRows = 25;
-    Options.SendLocation = true;
+    Options.SendLocation = false;
     var fTelnet = new fTelnetClient('fTelnetContainer', Options);
 </script>
 </body>
