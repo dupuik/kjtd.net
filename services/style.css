@@ -1,0 +1,218 @@
+body,
+html {
+    background-color: #242424;
+    color: #fff;
+    height: 100%;
+    scrollbar-color: #000 #232323
+}
+
+*:not(pre):not(code):not(kbd) {
+    font-family: sans-serif
+}
+
+ul {
+    list-style-position: inside
+}
+
+a {
+    color: #fff;
+    text-decoration: none
+}
+
+.link {
+    color: #1e90ff;
+    text-decoration: underline;
+    text-decoration-style: dotted
+}
+
+hr {
+    border: solid;
+    border-width: 1px;
+    color: #fff
+}
+
+:target {
+    animation: highlight 1s forwards;
+    animation-iteration-count: 2
+}
+
+@keyframes highlight {
+    0% {
+        background-color: rgba(0, 0, 0, 0)
+    }
+    50% {
+        background-color: #a503fc
+    }
+    100% {
+        background-color: rgba(0, 0, 0, 0)
+    }
+}
+
+table {
+    border: solid;
+    border-color: #323232;
+    border-width: 1px;
+    border-radius: 10px;
+    background: #161616;
+    padding: 5px 5px 5px 5px;
+    box-shadow: 0px 0px 15px #000;
+    border-collapse: collapse
+}
+
+th {
+    background-color: #060606;
+    border: solid;
+    border-color: #242424;
+    padding: 5px 5px 5px 5px
+}
+
+tr {
+    border: solid;
+    border-color: #242424
+}
+
+tr:nth-child(2n) {
+    background: #303030 !important
+}
+
+.borderless,
+.borderless table,
+.borderless td {
+    border: none;
+    border-width: 0px;
+    background: none;
+    box-shadow: none
+}
+
+input[type=text] {
+    background-color: #0c0c0c;
+    border: solid;
+    color: #fff;
+    border-width: 2px;
+    border-color: #fff;
+    font-size: 15pt;
+    border-radius: 10px
+}
+
+.nav {
+    font-size: 30px;
+    transition: filter .1s;
+    transition-timing-function: ease-in
+}
+
+.nav:hover {
+    filter: brightness(150%)
+}
+
+.nav:active {
+    filter: brightness(75%)
+}
+
+.colornav {
+    filter: grayscale(100%);
+    transition: filter .1s;
+    font-size: 30px
+}
+
+.colornav:hover {
+    filter: grayscale(0%)
+}
+
+.download {
+    outline: 1px solid #0e51c4;
+    margin: 2px 2px 2px 2px;
+    border: none;
+    border-radius: 5px;
+    background: #08275e;
+    color: #fff;
+    transition: background .3s, outline .3s, filter .1s;
+    transition-timing-function: ease-in;
+    padding: 10px;
+    display: inline-block;
+    cursor: pointer
+}
+
+.download:hover,
+.download:focus {
+    outline-width: 3px;
+    background: #0c3e94
+}
+
+.download:active {
+    filter: brightness(75%)
+}
+
+.softcard {
+    border: solid;
+    border-color: #323232;
+    border-width: 1px;
+    border-radius: 10px;
+    background: #101010;
+    display: inline-block;
+    padding: 5px 5px 5px 5px;
+    transition: box-shadow .5s;
+    box-shadow: 0px 0px 15px #000
+}
+
+a.softcard,
+button.softcard {
+    border-color: #1f003a
+}
+
+a.softcard:hover,
+a.softcard:focus,
+button.softcard:hover,
+button.softcard:focus {
+    position: relative;
+    z-index: 1;
+    box-shadow: 0px 0px 15px #1e90ff
+}
+
+@font-face {
+    font-family: "sweetlogo";
+    src: url("https://cdn.swee.codes/fonts/sweetlogo.ttf") format("truetype"),
+         url("https://cdn.swee.codes/fonts/sweetlogo.otf") format("opentype"),
+         url("https://cdn.swee.codes/fonts/sweetlogo.svg") format("svg");
+    font-weight: normal;
+    font-style: normal
+}
+
+.logo {
+    font-family: "sweetlogo"
+}
+
+.szcard {
+    background: linear-gradient(to bottom right, green, deepskyblue)
+}
+
+.social {
+    display: inline-block;
+    border: none;
+    border-radius: 10px;
+    padding: 5px;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+    word-wrap: break-word;
+    transition-timing-function: ease-out;
+    transition: filter .1s, transform .1s, width .3s
+}
+
+.social:hover {
+    filter: brightness(125%);
+    transform: translateY(-2px);
+    width: 200px
+}
+
+.pfp {
+    border-radius: 100%
+}
+
+.thumb {
+    background: #fff;
+    border-radius: 5px;
+    padding: 5px;
+    max-width: 75%;
+    max-height: 75vh;
+    display: inline-block
+}
